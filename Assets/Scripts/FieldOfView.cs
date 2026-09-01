@@ -12,6 +12,12 @@ public class FieldOfView : MonoBehaviour
     public LayerMask obstructionMask;
     public bool canSeePlayer;
 
+    public float distanceToPlayer; // Distancia entre el enemigo y el jugador
+
+    public AI seguirJugadorScript; // Referencia al script seguirjugador
+
+    public float suspicion = 0f; //Sospecha del enemigo, si llega a 100 el enemigo detecta al jugador
+
     private void Start()
     {
         playerRef = GameObject.FindGameObjectWithTag("Player");
@@ -52,5 +58,22 @@ public class FieldOfView : MonoBehaviour
         }
         else if (canSeePlayer)
             canSeePlayer = false;
+    }
+    void Update()
+    {
+        distanceToPlayer = Vector3.Distance(transform.position, playerRef.transform.position);
+        suspicion = Mathf.Clamp(suspicion, 0, 150);
+        if (canSeePlayer)
+        {
+            suspicion += (500f * Time.deltaTime) / distanceToPlayer; // Aumenta la sospecha del enemigo mientras el jugador está a la vista
+        }
+        if (suspicion >= 100f)
+        {
+            seguirJugadorScript.FollowPlayer(); // Llama al método FollowPlayer() del script seguirjugador para que el enemigo siga al jugador
+        }
+        if (!canSeePlayer)
+        {
+            suspicion -= 20f * Time.deltaTime; // Disminuye la sospecha del enemigo cuando el jugador no está a la vista
+        }   
     }
 }
