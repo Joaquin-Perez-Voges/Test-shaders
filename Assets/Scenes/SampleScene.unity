@@ -1509,7 +1509,7 @@ MonoBehaviour:
   - {fileID: 1231178613}
   - {fileID: 980835975}
   - {fileID: 983233002}
-  followPlayer: 1
+  followPlayer: 0
   distanceToFollowPlayer: 10
   distanceToFollowPath: 2
   player: {fileID: 0}
@@ -1621,7 +1621,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FieldOfVIew
   delay: 0.2
-  radius: 7
+  radius: 15
   angle: 90
   playerRef: {fileID: 0}
   targetMask:
@@ -1631,6 +1631,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   canSeePlayer: 0
+  distanceToPlayer: 0
+  seguirJugadorScript: {fileID: 1299061079}
+  suspicion: 0
 --- !u!1 &1450141519
 GameObject:
   m_ObjectHideFlags: 0
