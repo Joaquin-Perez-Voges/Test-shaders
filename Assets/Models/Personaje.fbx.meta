@@ -43,7 +43,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Zapato
-    second: {fileID: 2100000, guid: 9778f03dd72ab43a3988b7aaa30ca26d, type: 2}
+    second: {fileID: 2100000, guid: d7489324445ee49c2b37cec29a209674, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
