@@ -61,19 +61,22 @@ public class FieldOfView : MonoBehaviour
     }
     void Update()
     {
+        if (playerRef == null || seguirJugadorScript == null)
+            return;
+
         distanceToPlayer = Vector3.Distance(transform.position, playerRef.transform.position);
         suspicion = Mathf.Clamp(suspicion, 0, 150);
         if (canSeePlayer)
         {
-            suspicion += (500f * Time.deltaTime) / distanceToPlayer; // Aumenta la sospecha del enemigo mientras el jugador está a la vista
+            suspicion += (500f * Time.deltaTime) / Mathf.Max(distanceToPlayer, 0.1f); // Aumenta la sospecha del enemigo mientras el jugador está a la vista
         }
-        if (suspicion >= 100f)
-        {
-            seguirJugadorScript.FollowPlayer(); // Llama al método FollowPlayer() del script seguirjugador para que el enemigo siga al jugador
-        }
+
         if (!canSeePlayer)
         {
             suspicion -= 20f * Time.deltaTime; // Disminuye la sospecha del enemigo cuando el jugador no está a la vista
-        }   
+        }
+
+        // Let AI choose movement so hearing cannot override a chase.
+        seguirJugadorScript.SetPlayerDetected(suspicion >= 100f);
     }
 }

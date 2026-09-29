@@ -1,4 +1,5 @@
-﻿using System.Collections;
+using GamePlay;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,7 +27,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Velocidad al caminar sigiloso (Ctrl izquierdo). Debe ser menor a walkSpeed.")]
     public float crouchSpeed = 2f;
  
-    [Header("Ruido generado (para el futuro sistema de detección de guardias)")]
+    [Header("Ruido generado (detección de guardias)")]
     [Tooltip("Nivel de ruido al correr. Usar como radio en metros para que un guardia lo escuche.")]
     public float runNoiseRadius = 8f;
  
@@ -35,6 +36,9 @@ public class PlayerController : MonoBehaviour
  
     [Tooltip("Nivel de ruido al caminar sigiloso/agachado. Debería ser 0 o casi 0.")]
     public float crouchNoiseRadius = 0f;
+
+    [Min(0.05f)] public float footstepSoundInterval = 0.4f;
+    private float nextFootstepSoundTime;
  
     [Header("Peso e inventario (afecta velocidad)")]
     [Tooltip("Multiplicador de velocidad actual según el peso cargado. 1 = sin penalización, 0.5 = mitad de velocidad, etc. Lo debería actualizar el sistema de inventario.")]
@@ -79,8 +83,10 @@ public class PlayerController : MonoBehaviour
  
     private void Update()
     {
+        Vector3 previousPosition = transform.position;
         HandleMovement();
         ApplyGravity();
+        EmitMovementSound(previousPosition);
     }
  
     private void HandleMovement()
@@ -122,6 +128,23 @@ public class PlayerController : MonoBehaviour
         }
     }
  
+    private void EmitMovementSound(Vector3 previousPosition)
+    {
+        Vector3 movement = transform.position - previousPosition;
+        movement.y = 0f;
+        if (!controller.isGrounded || movement.sqrMagnitude <= 0.000001f)
+        {
+            CurrentNoiseRadius = 0f;
+            return;
+        }
+
+        if (CurrentNoiseRadius <= 0f || Time.time < nextFootstepSoundTime)
+            return;
+
+        nextFootstepSoundTime = Time.time + Mathf.Max(0.05f, footstepSoundInterval);
+        Sounds.MakeSound(new Sound(transform.position, CurrentNoiseRadius, Sound.SoundType.Interesting));
+    }
+
     private MovementState DetermineMovementState(Vector3 inputDir)
     {
         bool isMoving = inputDir.magnitude >= 0.1f;

@@ -12,14 +12,23 @@ public class NormalGuards : MonoBehaviour, IHear
     [SerializeField, Tooltip("How far away, in meters, the agent will run from danger.")] 
     private float displacementFromDanger = 10f;
 
+    private AI enemyAI;
+
     void Awake() 
     {
+        enemyAI = GetComponentInParent<AI>();
+
         if (agent == null && !TryGetComponent(out agent))        
             Debug.LogWarning(name + " doesn't have an agent!");        
     }
 
     public void RespondToSound(Sound sound)
     {
+        if (enemyAI != null)
+        {
+            enemyAI.RespondToSound(sound);
+            return;
+        }
         /* 
         *   Put fun things here
         *   Examples:
